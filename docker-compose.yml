@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: zuzu
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+    ports:
+      - "3307:3306"
+    networks:
+      - review-app-network
+
+# Uncomment and configure your Spring Boot application if needed.
+# app:
+#   build: .
+#   depends_on:
+#     - mysql
+#   volumes:
+#     - ./target/ZuzuReviewSystem-1.0-SNAPSHOT.jar:/app/ZuzuReviewSystem-1.0-SNAPSHOT.jar
+#   command: ["bash", "-c", "/app/wait-for-mysql.sh mysql 3306 -- java -jar /app/ZuzuReviewSystem-1.0-SNAPSHOT.jar"]
+#   networks:
+#     - review-app-network
+
+networks:
+  review-app-network:
+    driver: bridge
