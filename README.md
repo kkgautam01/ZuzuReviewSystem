@@ -27,7 +27,7 @@
 ### Log Process via Api
 ``` bash
 Post http://localhost:8080/v1/reviews/process
-
+```
 ### Logging
 1. All Info,Warn,Error,etc. are logged in [application.log](logs/application.log).
 
@@ -75,20 +75,30 @@ ALTER TABLE files AUTO_INCREMENT = 1;
 ```
 ## Assumptions & Actions
 1. Process about 500 logs a day.
-2. Provider updates files multiple times in a day.
+2. Provider updates files multiple times in a day. File structure 
+``` bash
+S3://<bucket>/<prefix>/yyyy/mm/dd/<filename>.jl
+example: s3://reviews/logs/2025/05/26/review01.jl
+```
 3. Listing of files will be fetched by pagination
-   4. AWS credentials are not available, could not test. But code is there to fetch files. Aws config is mentioned in the provider table under cloud_info (use own creds).
+   4. AWS credentials are not available, could not test. But code has been written to fetch files. Aws config is mentioned in the provider table under cloud_info (use own creds).
    5. Added a demo code to pick all files from local folder  [jsonFiles](src/main/resources/jsonFiles)
 6. Each File size is as big as demo file provided **[agoda_com_2025-04-10.jl](src/main/resources/jsonFiles/agoda_com_2025-04-10.jl)**
-   6. Not using any queue (kafka) or redis cache, as data size is not that big.
+   7. Not using any queue (kafka) or redis cache, as data size is not that big.
+   8. System is designed to accomodate 
+   9. As these systems are always growing, with each bottleneck.
+9. Using Threads to achieve non-blocking process.
 8. Only Mysql runs inside container. If needed in the future: kafka, redis, jar can be run inside container.
 9. Java 21 is used.
 10. Retry when Log Fails writing to DB.
-
-```bash
-S3://<bucket>/<fixedPath>/yyyy/mm/dd/<filename>.jl
-example: s3://reviews/logs/2025/05/26/review01.jl
-```
+11. Used Adapter, Factory and strategy design patterns.
+12. System is able to extend functionalities for the followings:
+    13. Extend for more Providers
+    14. Extend to add more Cloud providers (aws, gcp, azure, etc).
+    15. Extend to support multiple file formats (json, jl, csv, tab,etc.)
+    16. Extend to support different data format of file.
+    16. Extend to add languages.
+    17. Extend to add Rating categories (Clean, value for money, etc.).
 
 ## Setup Project
 **NOTE: Run mysql before jar**
